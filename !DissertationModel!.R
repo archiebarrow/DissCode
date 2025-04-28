@@ -275,11 +275,3 @@ summary(UnempEduModel)
 
 UnempEduResults <- summary(UnempEduModel)$coefficients
 write.csv(UnempEduResults, "~/DISS/Outputs/UnempEduResults.csv")
-
-#Do consider why p values are changing
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Results Visualizations
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
