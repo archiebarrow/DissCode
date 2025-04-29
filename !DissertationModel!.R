@@ -177,6 +177,11 @@ summary(CorePanel)
 CoreResults <- summary(CorePanel)$coefficients
 write.csv(CoreResults, "~/DISS/Outputs/OverallResults.csv")
 
+#Given the presence of heteroskedasticity (as per White Test) this adjusts standard errors and adds robustness 
+
+RobustModel <- vcov(CorePanel, type = "HC3") 
+coeftest(CorePanel, vcov = RobustModel)
+
 #Interaction Modelling
 #-----
 
