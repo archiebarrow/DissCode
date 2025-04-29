@@ -108,7 +108,7 @@ View(GenDebtMapData2012)
 
 DebtMap2020 <- ggplot(GenDebtMapData2020, aes(x = long, y = lat, group = group, fill = GenDebt)) + 
   geom_polygon(color = "black", linewidth = 0.1) +
-  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray") +
+  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray", limits = c(5, 260)) +  #Using the same colour scale values for ease of comparison
   theme_minimal() + 
   labs(title = "Global Map of General Govt. Gross Debt Ratio (2020)", fill = "General Gross Debt Ratio (%GDP)") +
   theme(legend.position = "bottom")
@@ -118,7 +118,7 @@ DebtMap2020
 
 DebtMap2012 <- ggplot(GenDebtMapData2012, aes(x = long, y = lat, group = group, fill = GenDebt)) + 
   geom_polygon(color = "black", linewidth = 0.1) +
-  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray") +
+  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray", limits = c(5, 260)) +
   theme_minimal() + 
   labs(title = "Global Map of General Govt. Gross Debt Ratio (2012)", fill = "General Gross Debt Ratio(%GDP)") +
   theme(legend.position = "bottom")
