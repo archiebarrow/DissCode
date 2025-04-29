@@ -7,16 +7,11 @@ install.packages("broom") #Extracts coefficients and confidence intervals for pl
 install.packages("interactions") #For Marginal Effects Plots
 install.packages("maps") #Provides Functions for Drawing Maps
 install.packages("viridis") #For Map Aesthetics
-install.packages("paletteer") #For Map Aesthetics
 install.packages("zoo") #For Interpolation
 install.packages("ggplot2") #For Plot Aesthetics
 install.packages("lmtest") #For Homoscedasticity checks
 install.packages("plm") #Necessary for econometric panel regression
 install.packages("sandwich") #Necessary for panel regression
-install.packages("car") #For Variance Inflation Factor Checks
-install.packages("openxlsx") #For exporting model outputs
-install.packages("ExPanDaR") #For Visualisations
-install.packages("Cairo")
 
 #Load Packages
 
