@@ -22,16 +22,11 @@ library(broom)
 library(interactions)
 library(maps)
 library(viridis)
-library(paletteer)
 library(zoo)
 library(ggplot2)
 library(plm)
 library(lmtest)
 library(sandwich)
-library(car)
-library(openxlsx)
-library(ExPanDaR)
-library(Cairo)
 
 #------------------------------------------------------------------------------------------------------------
 #Data Cleaning
