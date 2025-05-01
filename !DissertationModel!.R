@@ -85,7 +85,7 @@ ggplot(FitRes, aes(x = fitted, y = residuals)) +
        y = "Residuals") + 
   theme_minimal()
 
-#White test checking for homoscedasticity
+#White test checking for homoskedasticity
 #-----
 
 WhiteTest <- bptest(residuals ~ fitted + I(fitted^2)) 
