@@ -63,6 +63,12 @@ view(PairwiseCollinearity)
 
 write.csv(PairwiseCollinearity, "~/DISS/Outputs/CollinearityOutputs.csv") #Export for use in the write up
 
+#White test checking for heteroskedasticity
+#-----
+
+WhiteTest <- bptest(residuals ~ fitted + I(fitted^2)) 
+view(WhiteTest)
+
 #RESIDUALS PLOT
 #-----
 
@@ -84,12 +90,6 @@ ggplot(FitRes, aes(x = fitted, y = residuals)) +
        x = "Fitted Values",
        y = "Residuals") + 
   theme_minimal()
-
-#White test checking for homoskedasticity
-#-----
-
-WhiteTest <- bptest(residuals ~ fitted + I(fitted^2)) 
-view(WhiteTest)
 
 #Initial Data Visualizations
 #-----
