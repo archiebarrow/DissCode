@@ -182,21 +182,6 @@ write.csv(CoreResults, "~/DISS/Outputs/OverallResults.csv")
 RobustModel <- vcov(CorePanel, type = "HC3") 
 coeftest(CorePanel, vcov = RobustModel)
 
-#Wooldridge Test for Autocorrelation
-
-pwartest(CorePanel) #Significant p-value
-
-#Check for time-based autocorrelation
-
-pcdtest(CorePanel, test = "cd") #No significant p-value
-
-#Cluster Standard errors by country to account for within-country autocorrelation
-
-ClusteredResults <- coeftest(CorePanel, vcov = vcovHC(CorePanel, type = "sss", cluster = "group"))
-ClusteredResults
-
-write.csv(ClusteredResults, "~/DISS/Outputs/ClusteredResults.csv")
-
 #Interaction Modelling
 #-----
 
