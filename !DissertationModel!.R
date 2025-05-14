@@ -11,7 +11,8 @@ install.packages("zoo") #For Interpolation
 install.packages("ggplot2") #For Plot Aesthetics
 install.packages("lmtest") #For Homoscedasticity checks
 install.packages("plm") #Necessary for econometric panel regression
-install.packages("sandwich") #Necessary for panel regression robustness adjustments
+install.packages("sandwich") #Necessary for panel regression
+install.packages("pcse") #For autocorrelation adjustments
 
 #Load Packages
 
