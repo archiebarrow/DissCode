@@ -14,6 +14,8 @@ install.packages("plm") #Necessary for econometric panel regression
 install.packages("sandwich") #Necessary for panel regression
 install.packages("pcse") #For autocorrelation adjustments
 
+rm(list = ls())
+
 #Load Packages
 
 library(tidyverse)
@@ -22,13 +24,12 @@ library(rnaturalearth)
 library(broom)
 library(interactions)
 library(maps)
-library(viridis)
 library(zoo)
 library(ggplot2)
-library(lmtest)
 library(plm)
+library(lmtest)
 library(sandwich)
-library("pcse")
+library(pcse)
 
 #------------------------------------------------------------------------------------------------------------
 #Data Cleaning
@@ -36,6 +37,8 @@ library("pcse")
 
 #Interpolate Missing Data
 #-----
+
+ExPanD() #For EDA and seeing what data is missing
 
 Original_China_Unemp <- read.csv("ChinaUnemp.csv") #Read in countries with missing data for a variable
 Original_Argentina_Unemp <- read.csv("ArgentinaUnemp.csv") 
@@ -49,7 +52,7 @@ view(China_Unemp_Interpolated)
 view(Argentina_Unemp_Interpolated)
 
 #Read in Panel Data-set (includes Interpolated data and data for all variables)
-DebtPanelData <- read.csv("DebtPanelData.csv")
+DebtPanelData <- read.csv("~/DISS/FinalDataFiles/DebtPanelData.csv")
 
 #------------------------------------------------------------------------------------------------------------
 #COLLINEARITY AND HOMOSCEDASTICITY CHECKS
@@ -64,12 +67,6 @@ PairwiseCollinearity <- cor(DebtPanelData[, c("GenDebt", "GDPGrowth", "GenSpend"
 view(PairwiseCollinearity)
 
 write.csv(PairwiseCollinearity, "~/DISS/Outputs/CollinearityOutputs.csv") #Export for use in the write up
-
-#White test checking for heteroskedasticity
-#-----
-
-WhiteTest <- bptest(residuals ~ fitted + I(fitted^2)) 
-view(WhiteTest)
 
 #RESIDUALS PLOT
 #-----
@@ -93,6 +90,12 @@ ggplot(FitRes, aes(x = fitted, y = residuals)) +
        y = "Residuals") + 
   theme_minimal()
 
+#White test checking for homoscedasticity
+#-----
+
+WhiteTest <- bptest(residuals ~ fitted + I(fitted^2)) 
+view(WhiteTest)
+
 #Initial Data Visualizations
 #-----
 
@@ -110,7 +113,7 @@ View(GenDebtMapData2012)
 
 DebtMap2020 <- ggplot(GenDebtMapData2020, aes(x = long, y = lat, group = group, fill = GenDebt)) + 
   geom_polygon(color = "black", linewidth = 0.1) +
-  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray", limits = c(5, 260)) +  #Using the same colour scale values for ease of comparison
+  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray", limits = c(5, 260)) +
   theme_minimal() + 
   labs(title = "Global Map of General Govt. Gross Debt Ratio (2020)", fill = "General Gross Debt Ratio (%GDP)") +
   theme(legend.position = "bottom")
@@ -125,6 +128,20 @@ DebtMap2012 <- ggplot(GenDebtMapData2012, aes(x = long, y = lat, group = group, 
   labs(title = "Global Map of General Govt. Gross Debt Ratio (2012)", fill = "General Gross Debt Ratio(%GDP)") +
   theme(legend.position = "bottom")
 DebtMap2012
+
+#Zoom in on Europe to more easily view trends
+
+Europe2020 <- DebtMap2020 +
+  coord_sf(xlim = c(-25, 50), ylim = c(35, 72)) + 
+  labs(title = "European Map of General Govt. Gross Debt Ratio (2020)") + 
+  theme(legend.position = "bottom")
+Europe2020
+
+Europe2012 <- DebtMap2012 +
+  coord_sf(xlim = c(-25, 50), ylim = c(35, 72)) + 
+  labs(title = "European Map of General Govt. Gross Debt Ratio (2012)") + 
+  theme(legend.position = "bottom")
+Europe2012
 
 #Plot raw debt trends with a line plot
 
@@ -154,6 +171,7 @@ CorePanelRE <- plm(GenDebt ~ GDPGrowth + GenSpend + Inflation + PopGrowth + Unem
 
 BPTest <- bptest(CorePanelRE) #Breusch-Pagan Test 
 BPTest #If P-Value is less than 0.5 we should not used pooled effects
+#P-Value = < 2.2e-16, so not pooled effects
 
 #Hausman Test
 #---
@@ -179,17 +197,34 @@ summary(CorePanel)
 CoreResults <- summary(CorePanel)$coefficients
 write.csv(CoreResults, "~/DISS/Outputs/OverallResults.csv")
 
-#Given the presence of heteroskedasticity (as per White Test) this adjusts standard errors and adds robustness 
+#Given the presence of heteroskedasticity (as per White Test) this adjusts standard errors
 
 RobustModel <- vcov(CorePanel, type = "HC3") 
 coeftest(CorePanel, vcov = RobustModel)
+
+#Wooldridge Test for serial correlation
+
+
+pwartest(CorePanel) #Significant p-value
+
+#Check for time-based autocorrelation
+
+pcdtest(CorePanel, test = "cd") #No significant p-value
+
+#Cluster Standard errors by country to account for within-country autocorrelation
+
+ClusteredResults <- coeftest(CorePanel, vcov = vcovHC(CorePanel, type = "sss", cluster = "group"))
+ClusteredResults
+
+
+write.csv(ClusteredResults, "~/DISS/Outputs/ClusteredResults.csv")
 
 #Interaction Modelling
 #-----
 
 #Centering variables to be interacted
 
-MeanGrowth <- mean(PanelData$GDPGrowth, na.rm = TRUE) #Mean values must be calculated before manual centering
+MeanInflation <- mean(PanelData$Inflation, na.rm = TRUE) #Mean values must be calculated before manual centering
 MeanCorruption <- mean(PanelData$Corruption, na.rm = TRUE)
 MeanSpend <- mean(PanelData$GenSpend, na.rm = TRUE)
 MeanPopGrowth <- mean(PanelData$PopGrowth, na.rm = TRUE)
@@ -198,7 +233,7 @@ MeanHealthSpend <- mean(PanelData$HealthSpend, na.rm = TRUE)
 MeanEduSpend <- mean(PanelData$EduSpend, na.rm = TRUE)
 MeanUnemp <- mean(PanelData$Unemp, na.rm = TRUE)
 
-PanelData$CentredGrowth <- PanelData$GDPGrowth - MeanGrowth #Centering variables
+PanelData$CentredInflation <- PanelData$Inflation - MeanInflation #Centering variables
 PanelData$CentredCorruption <- PanelData$Corruption - MeanCorruption
 PanelData$CentredSpend <- PanelData$GenSpend - MeanSpend
 PanelData$CentredPopGrowth <- PanelData$PopGrowth - MeanPopGrowth
@@ -210,13 +245,23 @@ PanelData$CentredUnemp <- PanelData$Unemp - MeanUnemp
 #Regression with Growth and Corruption Interaction
 #-----
 
-CorruptGrowthModel <- plm(GenDebt ~ CentredGrowth*CentredCorruption + GenSpend + Inflation + PopGrowth + Unemp + AgeDepRatio + HealthSpend + EduSpend + MiliSpend,
+CorruptInflationModel <- plm(GenDebt ~ CentredInflation*CentredCorruption + GDPGrowth + GenSpend + PopGrowth + Unemp + AgeDepRatio + HealthSpend + EduSpend + MiliSpend,
                           data = PanelData,
                           model = "within")
-summary(CorruptGrowthModel)
+summary(CorruptInflationModel)
 
-CorruptGrowthResults <- summary(CorruptGrowthModel)$coefficients
-write.csv(CorruptGrowthResults, "~/DISS/Outputs/CorruptGrowthResults.csv")
+#Checks for autocorrelation
+
+pwartest(CorruptInflationModel) #For serial autocorrelation
+
+pcdtest(CorruptInflationModel, test = "cd") #For cross-sectional dependence
+
+#Run Clustered Adjustments following pwartest significance
+
+CorInfClusteredResults <- coeftest(CorruptInflationModel, vcov = vcovHC(CorruptInflationModel, type = "sss", cluster = "group"))
+CorInfClusteredResults
+write.csv(CorInfClusteredResults, "~/DISS/Outputs/CorInfClusteredResults.csv")
+
 
 #Regression with General Expenditure and Corruption Interaction
 #-----
@@ -232,13 +277,13 @@ write.csv(CorruptSpendingResults, "~/DISS/Outputs/CorruptSpendingResults.csv")
 #Regression with Population Growth and General Expenditure Interaction
 #-----
 
-PopGrowthSpendingModel <- plm(GenDebt ~ CentredPopGrowth*CentredSpend + GDPGrowth + Inflation + Unemp + AgeDepRatio + HealthSpend + EduSpend + MiliSpend + Corruption,
+PopGrowthSpendingModel <- plm(GenDebt ~ CentredSpend*CentredPopGrowth + GDPGrowth + Inflation + Unemp + AgeDepRatio + HealthSpend + EduSpend + MiliSpend + Corruption,
                         data = PanelData,
                         model = "within")
 summary(PopGrowthSpendingModel)
 
 PopGrowthSpendingResults <- summary(PopGrowthSpendingModel)$coefficients
-write.csv(PopGrowthSpendingResults, "~/DISS/Outputs/PopGrowthSpendingResults.csv") #NOT WORKING 
+write.csv(PopGrowthSpendingResults, "~/DISS/Outputs/PopGrowthSpendingResults.csv")
 
 #Regression with Age Dependency Ratio and General Expenditure Interaction
 #-----
