@@ -14,8 +14,6 @@ install.packages("plm") #Necessary for econometric panel regression
 install.packages("sandwich") #Necessary for panel regression
 install.packages("pcse") #For autocorrelation adjustments
 
-rm(list = ls())
-
 #Load Packages
 
 library(tidyverse)
