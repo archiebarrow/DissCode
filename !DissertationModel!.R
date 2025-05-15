@@ -57,11 +57,11 @@ DebtPanelData <- read.csv("~/DISS/FinalDataFiles/DebtPanelData.csv")
 #------------------------------------------------------------------------------------------------------------
 
 #Create a Correlation matrix
-CollinearityCheck <- cor(DebtPanelData[, c("GenDebt", "GDPGrowth", "GenSpend", "Inflation", "GovRevenue", "PopGrowth", "UrbanPopGrowth", "Unemp", "AgeDepRatio", "HealthSpend", "MiliSpend", "EduSpend", "Corruption")])
+CollinearityCheck <- cor(DebtPanelData[, c("GenDebt", "GDPGrowth", "GenSpend", "Inflation", "GovRevenue", "PopGrowth", "Unemp", "AgeDepRatio", "HealthSpend", "MiliSpend", "EduSpend", "Corruption")])
 view(CollinearityCheck)
 
 #Correlation matrix with pairwise deletion to combat missing data
-PairwiseCollinearity <- cor(DebtPanelData[, c("GenDebt", "GDPGrowth", "GenSpend", "Inflation", "GovRevenue", "PopGrowth", "UrbanPopGrowth", "Unemp", "AgeDepRatio", "HealthSpend", "MiliSpend", "EduSpend", "Corruption")], use = "pairwise.complete.obs")
+PairwiseCollinearity <- cor(DebtPanelData[, c("GenDebt", "GDPGrowth", "GenSpend", "Inflation", "GovRevenue", "PopGrowth", "Unemp", "AgeDepRatio", "HealthSpend", "MiliSpend", "EduSpend", "Corruption")], use = "pairwise.complete.obs")
 view(PairwiseCollinearity)
 
 write.csv(PairwiseCollinearity, "~/DISS/Outputs/CollinearityOutputs.csv") #Export for use in the write up
