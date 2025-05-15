@@ -141,15 +141,6 @@ Europe2012 <- DebtMap2012 +
   theme(legend.position = "bottom")
 Europe2012
 
-#Plot raw debt trends with a line plot
-
-ggplot(DebtPanelData, aes(x = year, y = GenDebt, group = region, color = region)) +
-  geom_line(alpha = 0.5) +
-  labs(title = "Public Debt Trends by Country", 
-       x = "Year", y = "General Gross Debt (% of GDP)") +
-  theme_minimal() +
-  theme(legend.position = "none")  #Hide legend due to too many countries
-
 #------------------------------------------------------------------------------------------------------------
 #PANEL DATA REGRESSION 
 #------------------------------------------------------------------------------------------------------------
