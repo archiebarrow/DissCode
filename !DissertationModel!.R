@@ -94,53 +94,6 @@ ggplot(FitRes, aes(x = fitted, y = residuals)) +
 WhiteTest <- bptest(residuals ~ fitted + I(fitted^2)) 
 view(WhiteTest)
 
-#Initial Data Visualizations
-#-----
-
-mapdata <- map_data("world") #This creates a data frame for all countries of the world and their geography, necessary for mapping
-GenDebt2020 <- read.csv("GenDebt2020.csv") #Single variable, non-temporal files for mapping
-GenDebt2012 <- read.csv("GenDebt2012.csv")
-
-GenDebtMapData2020 <- left_join(mapdata, GenDebt2020, by = "region") #Adds coordinates to our data
-View(GenDebtMapData2020)
-
-GenDebtMapData2012 <- left_join(mapdata, GenDebt2012, by = "region")
-View(GenDebtMapData2012)
-
-#Create The Map
-
-DebtMap2020 <- ggplot(GenDebtMapData2020, aes(x = long, y = lat, group = group, fill = GenDebt)) + 
-  geom_polygon(color = "black", linewidth = 0.1) +
-  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray", limits = c(5, 260)) +
-  theme_minimal() + 
-  labs(title = "Global Map of General Govt. Gross Debt Ratio (2020)", fill = "General Gross Debt Ratio (%GDP)") +
-  theme(legend.position = "bottom")
-DebtMap2020
-
-#Repeat for 2012
-
-DebtMap2012 <- ggplot(GenDebtMapData2012, aes(x = long, y = lat, group = group, fill = GenDebt)) + 
-  geom_polygon(color = "black", linewidth = 0.1) +
-  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray", limits = c(5, 260)) +
-  theme_minimal() + 
-  labs(title = "Global Map of General Govt. Gross Debt Ratio (2012)", fill = "General Gross Debt Ratio(%GDP)") +
-  theme(legend.position = "bottom")
-DebtMap2012
-
-#Zoom in on Europe to more easily view trends
-
-Europe2020 <- DebtMap2020 +
-  coord_sf(xlim = c(-25, 50), ylim = c(35, 72)) + 
-  labs(title = "European Map of General Govt. Gross Debt Ratio (2020)") + 
-  theme(legend.position = "bottom")
-Europe2020
-
-Europe2012 <- DebtMap2012 +
-  coord_sf(xlim = c(-25, 50), ylim = c(35, 72)) + 
-  labs(title = "European Map of General Govt. Gross Debt Ratio (2012)") + 
-  theme(legend.position = "bottom")
-Europe2012
-
 #------------------------------------------------------------------------------------------------------------
 #PANEL DATA REGRESSION 
 #------------------------------------------------------------------------------------------------------------
@@ -306,3 +259,51 @@ summary(UnempEduModel)
 
 UnempEduResults <- summary(UnempEduModel)$coefficients
 write.csv(UnempEduResults, "~/DISS/Outputs/UnempEduResults.csv")
+
+#-----------------------------------------------------------------------------------------------------------
+#Introduction Maps
+#-----------------------------------------------------------------------------------------------------------
+
+mapdata <- map_data("world") #This creates a data frame for all countries of the world and their geography, necessary for mapping
+GenDebt2020 <- read.csv("GenDebt2020.csv") #Single variable, non-temporal files for mapping
+GenDebt2012 <- read.csv("GenDebt2012.csv")
+
+GenDebtMapData2020 <- left_join(mapdata, GenDebt2020, by = "region") #Adds coordinates to our data
+View(GenDebtMapData2020)
+
+GenDebtMapData2012 <- left_join(mapdata, GenDebt2012, by = "region")
+View(GenDebtMapData2012)
+
+#Create The Map
+
+DebtMap2020 <- ggplot(GenDebtMapData2020, aes(x = long, y = lat, group = group, fill = GenDebt)) + 
+  geom_polygon(color = "black", linewidth = 0.1) +
+  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray", limits = c(5, 260)) +
+  theme_minimal() + 
+  labs(title = "Global Map of General Govt. Gross Debt Ratio (2020)", fill = "General Gross Debt Ratio (%GDP)") +
+  theme(legend.position = "bottom")
+DebtMap2020
+
+#Repeat for 2012
+
+DebtMap2012 <- ggplot(GenDebtMapData2012, aes(x = long, y = lat, group = group, fill = GenDebt)) + 
+  geom_polygon(color = "black", linewidth = 0.1) +
+  scale_fill_distiller(palette = "BuGn", direction = 1, na.value = "gray", limits = c(5, 260)) +
+  theme_minimal() + 
+  labs(title = "Global Map of General Govt. Gross Debt Ratio (2012)", fill = "General Gross Debt Ratio(%GDP)") +
+  theme(legend.position = "bottom")
+DebtMap2012
+
+#Zoom in on Europe to more easily view trends
+
+Europe2020 <- DebtMap2020 +
+  coord_sf(xlim = c(-25, 50), ylim = c(35, 72)) + 
+  labs(title = "European Map of General Govt. Gross Debt Ratio (2020)") + 
+  theme(legend.position = "bottom")
+Europe2020
+
+Europe2012 <- DebtMap2012 +
+  coord_sf(xlim = c(-25, 50), ylim = c(35, 72)) + 
+  labs(title = "European Map of General Govt. Gross Debt Ratio (2012)") + 
+  theme(legend.position = "bottom")
+Europe2012
