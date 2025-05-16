@@ -4,7 +4,6 @@ install.packages("tidyverse")
 install.packages("sf")
 install.packages("broom") #Extracts coefficients and confidence intervals for plotting
 install.packages("interactions") #For Marginal Effects Plots
-install.packages("maps") #Provides Functions for Drawing Maps
 install.packages("zoo") #For Interpolation
 install.packages("ggplot2") #For Plotting / Mapping
 install.packages("lmtest") #For Homoscedasticity checks
@@ -19,7 +18,6 @@ library(sf)
 library(rnaturalearth)
 library(broom)
 library(interactions)
-library(maps)
 library(zoo)
 library(ggplot2)
 library(plm)
@@ -263,9 +261,11 @@ write.csv(UnempEduResults, "~/DISS/Outputs/UnempEduResults.csv")
 #-----------------------------------------------------------------------------------------------------------
 install.packages("viridis") #For Map Aesthetics
 install.packages("rnaturalearth") #Provides Map Data
+install.packages("maps") #Provides Functions for Drawing Maps
 
 library(viridis)
 library(rnaturalearth)
+library(maps)
 
 mapdata <- map_data("world") #This creates a data frame for all countries of the world and their geography, necessary for mapping
 GenDebt2020 <- read.csv("GenDebt2020.csv") #Single variable, non-temporal files for mapping
